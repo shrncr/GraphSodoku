@@ -70,7 +70,7 @@ public class Graph {
     }
     
 
-    private int[] helper(Vertex vertex, HashSet<Vertex> verticesToRemove) {
+    private int[] helper(Vertex vertex, HashSet<Vertex> verticesToRemove) {//for single candidatae
         int[] toret = {-1,-1,-1};
         if (vertex.getCandidates().size() == 1) {
             int fixedValue = vertex.getCandidates().iterator().next(); //get single candidate
