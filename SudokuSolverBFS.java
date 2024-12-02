@@ -86,6 +86,7 @@ public class SudokuSolverBFS {
     }
 
     public static void main(String[] args) {
+        long startTime = System.nanoTime();
         int[][] board = {
             {0, 0, 0, 0, 0, 0, 5, 0, 0},
             {0, 0, 5, 2, 7, 6, 9, 8, 0},
@@ -102,9 +103,16 @@ public class SudokuSolverBFS {
         if (solvedBoard != null) {
             for (int[] row : solvedBoard) {
                 System.out.println(Arrays.toString(row));
+                
             }
+            
+
         } else {
             System.out.println("No solution found!");
+            
         }
+        long endTime = System.nanoTime(); // End the timer
+        long elapsedTime = endTime - startTime; // Calculate elapsed time
+        System.out.println("Execution Time: " + (elapsedTime / 1_000_000.0) + " ms");
     }
 }

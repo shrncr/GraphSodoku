@@ -74,7 +74,7 @@ public class Graph {
         int[] toret = {-1,-1,-1};
         if (vertex.getCandidates().size() == 1) {
             int fixedValue = vertex.getCandidates().iterator().next(); //get single candidate
-            System.out.println("[" + vertex.getRow() + "," + vertex.getCol() + "] solution is " + fixedValue);
+            //System.out.println("[" + vertex.getRow() + "," + vertex.getCol() + "] solution is " + fixedValue);
             toret[0] = vertex.getRow();
             toret[1] = vertex.getCol();
             toret[2]= fixedValue;
@@ -133,8 +133,8 @@ public class Graph {
             if (vertex.getCandidates().equals(neighbor.getCandidates()) && vertex != neighbor) {
                 verticesToProcess.add(vertex);
                 verticesToProcess.add(neighbor);
-                System.out.print(vertex.getRow() + "," + vertex.getCol() + " and ");
-                System.out.println(neighbor.getRow()  + "," +neighbor.getCol() + " have " + vertex.getCandidates());
+                //System.out.print(vertex.getRow() + "," + vertex.getCol() + " and ");
+                //System.out.println(neighbor.getRow()  + "," +neighbor.getCol() + " have " + vertex.getCandidates());
                 return true; //if found
             }
         }
@@ -161,8 +161,11 @@ public class Graph {
 
         while (!queue.isEmpty()) {
             Vertex current = queue.remove(0);
-
-            items.add(helper(current, verticesToRemove)); 
+            int[] coords = helper(current, verticesToRemove);
+            if (coords[0] != -1){
+                items.add(coords); 
+            }
+            
             for (Vertex neighbor : current.getNeighbors()) {
                 if (!visited.contains(neighbor)) {
                     visited.add(neighbor);

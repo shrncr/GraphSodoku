@@ -77,10 +77,21 @@ public class SudokuSolverDLS {
             {0, 0, 0, 0, 8, 0, 0, 7, 9}
         };
 
+        // Start the timer
+        long startTime = System.nanoTime();
+
+        // Solve the Sudoku puzzle
         if (solveDLS(board, 0, 0, 0)) {
+            long endTime = System.nanoTime(); // End the timer
+            long elapsedTime = endTime - startTime; // Calculate elapsed time
+            System.out.println("Solved Sudoku:");
             printBoard(board); // Print solved board
+            System.out.println("Execution Time: " + (elapsedTime / 1_000_000.0) + " ms");
         } else {
+            long endTime = System.nanoTime(); // End the timer
+            long elapsedTime = endTime - startTime; // Calculate elapsed time
             System.out.println("No solution found!");
+            System.out.println("Execution Time: " + (elapsedTime / 1_000_000.0) + " ms");
         }
     }
 }

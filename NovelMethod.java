@@ -40,6 +40,7 @@ public class NovelMethod {
         HashSet<Integer> cand;
         Graph CandidateGraph = new Graph();
         int[] boxID = new int[2];
+        long startTime = System.nanoTime();
         for (int i=0; i<board.length; i++){
 
             int rowIndex = (i) / ((int)Math.sqrt(board.length));
@@ -49,29 +50,38 @@ public class NovelMethod {
                 if (board[i][j]==0){
                     int colIndex = (j) / ((int)Math.sqrt(board.length));
                     boxID[1] = colIndex;
-                        System.out.println("Adding to graph at box" + boxID[0] + "," + boxID[1] + " at position " + i +"," + j);
-                        cand = CreateCandidates(i,j,boxID,board);
-                        System.out.println("\t candidates are: " + cand);
-                        CandidateGraph.add(i,j,boxID, (new Vertex(i,j,boxID,cand)));
+                        //System.out.println("Adding to graph at box" + boxID[0] + "," + boxID[1] + " at position " + i +"," + j);
+                        cand = CreateCandidates(i,j,boxID,board); //create candidates for each box without a fixed solution
+                        //System.out.println("\t candidates are: " + cand);
+                        CandidateGraph.add(i,j,boxID, (new Vertex(i,j,boxID,cand)));//adds to graph
         
                 }
   
             }
 
         }
-
-        CandidateGraph.eliminateSingleCandidates();
-        CandidateGraph.eliminateSingleCandidates();
-        CandidateGraph.eliminateNakedPairs();
-        CandidateGraph.eliminateSingleCandidates();
-        CandidateGraph.eliminateSingleCandidates();
-        CandidateGraph.eliminateSingleCandidates();
-        CandidateGraph.eliminateSingleCandidates();
-        CandidateGraph.eliminateSingleCandidates();
-        CandidateGraph.eliminateSingleCandidates();
-        CandidateGraph.eliminateSingleCandidates();
-        CandidateGraph.eliminateSingleCandidates();
-        System.out.println(CandidateGraph);
+        while (!CandidateGraph.isEmpty()){//solve for sodoku items until graph empty (no pending solutions)
+            ArrayList<int[]> i = CandidateGraph.eliminateSingleCandidates(); //finds obvi solutions and returns solutions found
+            if (i.size() == 0){//if no solution was found u should check for identical direct neighbored pairs
+                CandidateGraph.eliminateNakedPairs();
+            }else{//if u did find solutions, then put them on the board
+                for (int d = 0; d<i.size(); d++){
+                    board[i.get(d)[0]][i.get(d)[1]] = i.get(d)[2];//super long winded way of editing the board
+                }
+            }
+            
+        }
+        long endTime = System.nanoTime(); // End the timer
+        long elapsedTime = endTime - startTime; // Calculate elapsed time
+        System.out.println("Execution Time: " + (elapsedTime / 1_000_000.0) + " ms");
+        for (int row = 0; row<board.length; row++){
+            for (int col=0; col<board[row].length; col++){
+                System.out.print(board[row][col]);
+            }
+            System.out.println();
+        }
+        
+        
 
     }
 
