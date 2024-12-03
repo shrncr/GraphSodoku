@@ -76,12 +76,13 @@ public class Graph {
         }
         return toret;
     }
-    public void eliminateNakedPairs() {
+    public boolean eliminateNakedPairs() {
+        boolean x = false;
         ArrayList<Vertex> queue = new ArrayList<>();
         HashSet<Vertex> visited = new HashSet<>();
         HashSet<Vertex> verticesToProcess = new HashSet<>();
     
-        if (this.start == null) return;
+        if (this.start == null) return false;
         queue.add(this.start);
         visited.add(this.start);
     
@@ -100,7 +101,8 @@ public class Graph {
             ArrayList<Vertex> neighborsCopy = new ArrayList<>(vertex.getNeighbors());
             for (Vertex sharedNeighbor : neighborsCopy) {
                 if (!sharedNeighbor.equals(vertex)) {
-                    if (vertex.getCandidates().equals(sharedNeighbor.getCandidates())) {
+                    if (vertex.getCandidates().equals(sharedNeighbor.getCandidates()) && vertex.getCandidates().size() ==2) {
+                        x = true;
                         for (Vertex neighborOfShared : sharedNeighbor.getNeighbors()) {
                             if (!neighborOfShared.equals(vertex) && isInCommonRegion(vertex, sharedNeighbor, neighborOfShared)) {
                                 neighborOfShared.getCandidates().removeAll(vertex.getCandidates());
@@ -110,6 +112,7 @@ public class Graph {
                 }
             }
         }
+        return x;
     }
     private boolean help(Vertex vertex, HashSet<Vertex> verticesToProcess) { //for multiplenaked
         for (Vertex neighbor : vertex.getNeighbors()) {
