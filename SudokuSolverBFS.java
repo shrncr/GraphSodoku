@@ -5,6 +5,7 @@
  * Asked ChatGPT, "can you transform *program* from python to java"
  * Original transformation did not work
  * Changed board to 0's, returned program to Chat, Chat returned fixed program
+ * Comments and majority implementation from chat
  */
 import java.util.*;
 

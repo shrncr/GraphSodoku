@@ -1,9 +1,16 @@
+/*
+ * DLS Implementation of Sodoku Solver
+ * Implementation based on https://github.com/elondemi/Sudoku-Solver
+ * Was originally in Python
+ * Asked ChatGPT, "can you transform *program* from python to java"
+ * Comments and majority implementation from chat
+ */
 import java.util.*;
 
 public class SudokuSolverDLS {
 
     // Define a constant for the maximum depth
-    private static final int MAX_DEPTH = 81;
+    private static final int MAX_DEPTH = 75;
 
     // Check if the Sudoku board is valid
     public static boolean isValid(int[][] board, int row, int col, int num) {
