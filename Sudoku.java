@@ -246,7 +246,7 @@ public class Sudoku {
     public static void main(String[] args) {
 
         ArrayList<int[][]> boards = BoardParser.parseBoardsFromFile("boards.txt");
-
+        long startTime = System.nanoTime();
         int count = 0;
         for (int[][] board : boards) {
             System.out.println("Board " + count);
@@ -262,6 +262,9 @@ public class Sudoku {
             count++;
 
         }
+        long endTime = System.nanoTime(); // End time measurement
+        long elapsedTime = endTime - startTime; // Calculate elapsed time in nanoseconds
+        System.out.println("Time taken to solve all: " + elapsedTime / 1_000_000.0 + " ms");
 
     }
 }
