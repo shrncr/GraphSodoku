@@ -76,8 +76,8 @@ public class Graph {
         }
         return toret;
     }
-    public boolean eliminateNakedPairs() {
-        boolean x = false;
+    public boolean eliminateNakedGroups(int groupSize) {
+        boolean changesMade = false;
         ArrayList<Vertex> queue = new ArrayList<>();
         HashSet<Vertex> visited = new HashSet<>();
         HashSet<Vertex> verticesToProcess = new HashSet<>();
@@ -86,9 +86,10 @@ public class Graph {
         queue.add(this.start);
         visited.add(this.start);
     
+        // Traverse the graph
         while (!queue.isEmpty()) {
             Vertex current = queue.remove(0);
-            help(current, verticesToProcess);
+            findGroups(current, verticesToProcess, groupSize);
     
             for (Vertex neighbor : current.getNeighbors()) {
                 if (!visited.contains(neighbor)) {
@@ -97,14 +98,21 @@ public class Graph {
                 }
             }
         }
+    
+        // Process each group
         for (Vertex vertex : verticesToProcess) {
             ArrayList<Vertex> neighborsCopy = new ArrayList<>(vertex.getNeighbors());
+    
             for (Vertex sharedNeighbor : neighborsCopy) {
                 if (!sharedNeighbor.equals(vertex)) {
-                    if (vertex.getCandidates().equals(sharedNeighbor.getCandidates()) && vertex.getCandidates().size() ==2) {
-                        x = true;
+                    if (vertex.getCandidates().equals(sharedNeighbor.getCandidates())
+                            && vertex.getCandidates().size() == groupSize) {
+                        changesMade = true;
+    
+                        // Remove candidates from all shared neighbors
                         for (Vertex neighborOfShared : sharedNeighbor.getNeighbors()) {
-                            if (!neighborOfShared.equals(vertex) && isInCommonRegion(vertex, sharedNeighbor, neighborOfShared)) {
+                            if (!neighborOfShared.equals(vertex)
+                                    && isInCommonRegion(vertex, sharedNeighbor, neighborOfShared)) {
                                 neighborOfShared.getCandidates().removeAll(vertex.getCandidates());
                             }
                         }
@@ -112,7 +120,17 @@ public class Graph {
                 }
             }
         }
-        return x;
+        return changesMade;
+    }
+    
+    private void findGroups(Vertex vertex, HashSet<Vertex> verticesToProcess, int groupSize) {
+        for (Vertex neighbor : vertex.getNeighbors()) {
+            if (vertex.getCandidates().equals(neighbor.getCandidates())
+                    && vertex.getCandidates().size() == groupSize) {
+                verticesToProcess.add(vertex);
+                verticesToProcess.add(neighbor);
+            }
+        }
     }
     private boolean help(Vertex vertex, HashSet<Vertex> verticesToProcess) { //for multiplenaked
         for (Vertex neighbor : vertex.getNeighbors()) {
