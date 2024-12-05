@@ -1,94 +1,95 @@
 import java.util.Arrays;
 
 public class Cell {
-    public Integer number; // Use Integer to allow null values
-    public int[] candidates; // Correct spelling from "canidates" to "candidates"
+    private Integer number; // Use Integer to allow null values
+    private int[] candidates; // Array of possible candidates
 
+    // Default constructor initializes the cell with all candidates
     public Cell() {
-        this.number = null; // Use null for an uninitialized state
-        setCandidates(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }); // Proper array initialization
+        this.number = null; // No number assigned initially
+        this.candidates = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }; // Full range of candidates
     }
 
-    public Cell(Integer n) {
-        if (isCanidate(n)) {
-            this.number = n;
-            setCandidates(new int[0]); // No candidates if the cell already has a number
-        }
+    // Constructor to initialize a cell with a specific number
+    public Cell(Integer number) {
+        this.number = number;
+        this.candidates = new int[0]; // No candidates when a number is already assigned
     }
 
-    private void setCandidates(int[] c) {
-        this.candidates = c;
+    // COpy Constructor
+    public Cell(Cell c) {
+        this.number = c.getNumber();
+        this.candidates = c.getCandidates();
     }
 
-    private boolean isCanidate(int n) {
-        for (int i = 0; i < this.candidates.length; i++) {
-            if (this.candidates[i] == n) {
+    // Getters and setters
+    public Integer getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
+        this.candidates = new int[0]; // Clear candidates
+    }
+
+    public int[] getCandidates() {
+        return candidates;
+    }
+
+    // Set the list of candidates
+    private void setCandidates(int[] candidates) {
+        this.candidates = candidates;
+    }
+
+    // Check if a value is a candidate for this cell
+    public boolean isCandidate(int n) {
+        for (int candidate : this.candidates) {
+            if (candidate == n) {
                 return true;
             }
         }
         return false;
     }
 
-    public void setNumber(int n) {
-        this.number = n;
-        setCandidates(new int[0]);
-    }
-
-    public void removeCandidate(int c) {
-        // Check if the candidate exists in the array
-        boolean found = false;
-        for (int candidate : this.candidates) {
-            if (candidate == c) {
-                found = true;
-                break;
-            }
-        }
-
-        // If the candidate is not found, do nothing
-        if (!found) {
+    // Remove a specific candidate
+    public void removeCandidate(int candidate) {
+        // If the candidate is not in the list, do nothing
+        if (!isCandidate(candidate)) {
             return;
         }
 
-        // Create a new array with a reduced size
+        // Create a new array with the candidate removed
         int[] newCandidates = new int[this.candidates.length - 1];
         int index = 0;
-        // Copy all candidates except the one to be removed
-        for (int i = 0; i < this.candidates.length; i++) {
-            if (this.candidates[i] != c) {
-                newCandidates[index++] = this.candidates[i];
+        for (int c : this.candidates) {
+            if (c != candidate) {
+                newCandidates[index++] = c;
             }
         }
-
-        // Update the candidates array
-        setCandidates(newCandidates);
+        this.candidates = newCandidates; // Update the candidates list
     }
 
+    // Main method for testing
     public static void main(String[] args) {
-        // Initialize a cell and print initial candidates
         Cell cell = new Cell();
-        System.out.println("Initial candidates: " + Arrays.toString(cell.candidates));
+        System.out.println("Initial candidates: " + Arrays.toString(cell.getCandidates()));
 
-        // Test removing an existing candidate
         cell.removeCandidate(5);
-        System.out.println("After removing 5: " + Arrays.toString(cell.candidates));
+        System.out.println("After removing 5: " + Arrays.toString(cell.getCandidates()));
 
-        // Test removing a non-existing candidate
         cell.removeCandidate(10);
-        System.out.println("After attempting to remove 10: " + Arrays.toString(cell.candidates));
+        System.out.println("After attempting to remove 10: " + Arrays.toString(cell.getCandidates()));
 
-        // Test setting the number, which clears candidates
         cell.setNumber(7);
-        System.out.println("After setting number to 7: " + Arrays.toString(cell.candidates));
-        System.out.println("Cell number: " + cell.number);
+        System.out.println("After setting number to 7: " + Arrays.toString(cell.getCandidates()));
+        System.out.println("Cell number: " + cell.getNumber());
 
-        // Test initializing a cell with a number
         Cell cellWithNumber = new Cell(3);
-        System.out.println("Cell initialized with number 3: " + Arrays.toString(cellWithNumber.candidates));
-        System.out.println("Cell number: " + cellWithNumber.number);
+        System.out.println("Cell initialized with number 3: " + Arrays.toString(cellWithNumber.getCandidates()));
+        System.out.println("Cell number: " + cellWithNumber.getNumber());
 
-        // Test removing a candidate on a cell with no candidates
         cellWithNumber.removeCandidate(3);
         System.out.println("After attempting to remove candidate from cell with no candidates: "
-                + Arrays.toString(cellWithNumber.candidates));
+                + Arrays.toString(cellWithNumber.getCandidates()));
     }
 }

@@ -1,3 +1,9 @@
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
 public class Sudoku {
     Cell[][] board; // The 9x9 Sudoku board
 
@@ -12,49 +18,46 @@ public class Sudoku {
         }
     }
 
+    // Copy constructor for Sudoku
+    public Sudoku(Sudoku other) {
+        this.board = copyBoard(other.board);
+    }
+
     /**
      * Adds a number to the specified cell in the Sudoku board.
-     *
-     * @param n   The number to add (1-9)
-     * @param row The row index (0-8)
-     * @param col The column index (0-8)
      */
     public void addNumber(int n, int row, int col) {
-        // Validate the row and column indices
         if (row < 0 || row >= 9 || col < 0 || col >= 9) {
             throw new IllegalArgumentException("Row and column must be between 0 and 8.");
         }
-        // Validate the number to be between 1 and 9
         if (n < 1 || n > 9) {
             throw new IllegalArgumentException("Number must be between 1 and 9.");
         }
-        // Set the number in the specified cell
         board[row][col].setNumber(n);
         eliminateCandidates(n, row, col);
     }
 
-    /**
-     * Eliminates candidates from the row, column, and 3x3 subgrid of the specified
-     * cell.
-     *
-     * @param n   The number to eliminate
-     * @param row The row index of the cell
-     * @param col The column index of the cell
-     */
+    public static Cell[][] addNumber(int n, int row, int col, Cell[][] board) {
+        if (row < 0 || row >= 9 || col < 0 || col >= 9) {
+            throw new IllegalArgumentException("Row and column must be between 0 and 8.");
+        }
+        if (n < 1 || n > 9) {
+            throw new IllegalArgumentException("Number must be between 1 and 9.");
+        }
+        board[row][col].setNumber(n);
+        return eliminateCandidates(n, row, col, board);
+    }
+
     private void eliminateCandidates(int n, int row, int col) {
-        // Eliminate from row and column
         for (int i = 0; i < 9; i++) {
-            board[row][i].removeCandidate(n); // Remove from row
-            board[i][col].removeCandidate(n); // Remove from column
+            board[row][i].removeCandidate(n);
+            board[i][col].removeCandidate(n);
         }
 
-        // Eliminate from the 3x3 subgrid
-        int startRow = 3 * (row / 3); // Get the starting row of the subgrid
-        int startCol = 3 * (col / 3); // Get the starting column of the subgrid
-
+        int startRow = 3 * (row / 3);
+        int startCol = 3 * (col / 3);
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                // Only remove candidates in the subgrid that are not the cell itself
                 if (startRow + i != row || startCol + j != col) {
                     board[startRow + i][startCol + j].removeCandidate(n);
                 }
@@ -62,10 +65,28 @@ public class Sudoku {
         }
     }
 
-    private boolean isSolved() {
+    private static Cell[][] eliminateCandidates(int n, int row, int col, Cell[][] board) {
+        for (int i = 0; i < 9; i++) {
+            board[row][i].removeCandidate(n);
+            board[i][col].removeCandidate(n);
+        }
+
+        int startRow = 3 * (row / 3);
+        int startCol = 3 * (col / 3);
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                if (startRow + i != row || startCol + j != col) {
+                    board[startRow + i][startCol + j].removeCandidate(n);
+                }
+            }
+        }
+        return board;
+    }
+
+    private boolean isSolved(Cell[][] board) {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                if (board[i][j].number == null) {
+                if (board[i][j].getNumber() == null) {
                     return false;
                 }
             }
@@ -73,50 +94,174 @@ public class Sudoku {
         return true;
     }
 
-    public Cell[][] solve() {
-        if (isSolved()) {
-            return board;
+    public Cell[][] solveDFS() {
+        long startTime = System.nanoTime(); // Start timing
+        this.board = solveDFS(this.board);
+        long endTime = System.nanoTime(); // End timing
+
+        double durationInMilliseconds = (endTime - startTime) / 1_000_000.0; // Convert to milliseconds
+        System.out.printf("DFS solving time: %.3f milliseconds%n", durationInMilliseconds);
+
+        return this.board;
+    }
+
+    private Cell[][] solveDFS(Cell[][] board) {
+        // If the board is solved, return it
+        if (isSolved(board)) {
+            return copyBoard(board);
         }
-        return solve(this.board, 1);
+
+        // Find the next empty cell (with the fewest candidates)
+        int[] nextEmptyCell = findNextEmptyCell(board);
+        if (nextEmptyCell == null) {
+            return null; // No valid moves
+        }
+
+        int row = nextEmptyCell[0];
+        int col = nextEmptyCell[1];
+        int[] candidates = board[row][col].getCandidates();
+
+        // Try placing each candidate
+        for (int candidate : candidates) {
+            Cell[][] newBoard = copyBoard(board); // Copy the board
+            addNumber(candidate, row, col, newBoard); // Place the candidate
+
+            // Recursively solve the board
+            Cell[][] result = solveDFS(newBoard);
+            if (result != null) {
+                return result; // Return the solution if found
+            }
+        }
+
+        // If no solution is found, backtrack
+        return null;
     }
 
-    private Cell[][] solve(Cell[][] board, int match) {
+    private int[] findNextEmptyCell(Cell[][] board) {
+        int minCandidates = Integer.MAX_VALUE;
+        int[] bestCell = null;
 
-        return board;
-    }
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j].getNumber() == null) {
+                    int numCandidates = board[i][j].getCandidates().length;
+                    if (numCandidates < minCandidates) {
+                        minCandidates = numCandidates;
+                        bestCell = new int[] { i, j };
 
-    // Method to display the board for testing
-    public void displayBoard() {
-        boolean SHOWCANIDATES = false;
-        for (int row = 0; row < 9; row++) {
-            for (int col = 0; col < 9; col++) {
-                // Print cell numbers or candidates
-                if (board[row][col].number == null) {
-                    if (SHOWCANIDATES == true) {
-                        System.out.print("[");
-                        // Print candidates for the cell
-                        for (int candidate : board[row][col].candidates) {
-                            System.out.print(candidate + " ");
+                        // If a cell has only one candidate, we can prioritize it
+                        if (minCandidates == 1) {
+                            return bestCell;
                         }
-                        System.out.print("] ");
-                    } else {
-                        System.out.print(". ");
                     }
-                } else {
-                    // Print the number in the cell
-                    System.out.print(board[row][col].number + " ");
                 }
             }
-            System.out.println(); // New line after each row
+        }
+
+        return bestCell;
+    }
+
+    public ArrayList<Cell[][]> solveBFS() {
+        return solveBFS(this.board);
+    }
+
+    private ArrayList<Cell[][]> solveBFS(Cell[][] board) {
+        long startTime = System.nanoTime(); // Start time measurement
+
+        Queue<Cell[][]> queue = new LinkedList<>();
+        queue.add(copyBoard(board));
+        ArrayList<Cell[][]> solutions = new ArrayList<>();
+        HashSet<String> visited = new HashSet<>();
+
+        while (!queue.isEmpty()) {
+            Cell[][] currentState = queue.poll();
+
+            String serialized = serializeBoard(currentState);
+            if (visited.contains(serialized))
+                continue;
+            visited.add(serialized);
+
+            if (isSolved(currentState)) {
+                solutions.add(copyBoard(currentState));
+                continue;
+            }
+
+            queue.addAll(generateNextStates(currentState));
+        }
+
+        long endTime = System.nanoTime(); // End time measurement
+        long elapsedTime = endTime - startTime; // Calculate elapsed time in nanoseconds
+        System.out.println("Time taken to solve: " + elapsedTime / 1_000_000.0 + " ms");
+
+        return solutions;
+    }
+
+    public static List<Cell[][]> generateNextStates(Cell[][] board) {
+        List<Cell[][]> nextStates = new ArrayList<>();
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j].getNumber() == null) {
+                    int[] candidates = board[i][j].getCandidates();
+                    for (int candidate : candidates) {
+                        Cell[][] copy = copyBoard(board);
+                        addNumber(candidate, i, j, copy);
+                        nextStates.add(copy);
+                    }
+                    return nextStates;
+                }
+            }
+        }
+        return nextStates;
+    }
+
+    private static Cell[][] copyBoard(Cell[][] board) {
+        Cell[][] copy = new Cell[9][9];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                copy[i][j] = new Cell(board[i][j]);
+            }
+        }
+        return copy;
+    }
+
+    private String serializeBoard(Cell[][] board) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                sb.append(board[i][j].getNumber() == null ? "0" : board[i][j].getNumber());
+            }
+        }
+        return sb.toString();
+    }
+
+    public void displayBoard() {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                System.out.print(board[i][j].getNumber() == null ? ". " : board[i][j].getNumber() + " ");
+            }
+            System.out.println();
         }
     }
 
     public static void main(String[] args) {
-        Sudoku sudoku = new Sudoku(); // Create a Sudoku board
 
-        // Test adding a number to the board
-        sudoku.addNumber(5, 0, 0);
-        // Add the number 5 at row 0, column 0
-        sudoku.displayBoard(); // Display the board after adding the number
+        ArrayList<int[][]> boards = BoardParser.parseBoardsFromFile("boards.txt");
+
+        int count = 0;
+        for (int[][] board : boards) {
+            System.out.println("Board " + count);
+            Sudoku sudoku = new Sudoku();
+            for (int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    if (board[i][j] != 0)
+                        sudoku.addNumber(board[i][j], i, j);
+                }
+            }
+            sudoku.solveDFS();
+            sudoku.displayBoard();
+            count++;
+
+        }
+
     }
 }
