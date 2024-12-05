@@ -40,12 +40,12 @@ public class NovelMethod {
     }
 
     public static void main(String[] args) {
-        long startTimeOverall = System.nanoTime();
+        long totalSolvingTime = 0;
         for (int[][] board : boards) {
-            long startTime = System.nanoTime();
+
             System.out.println("Solving new board:");
             printBoard(board);
-
+            long startTime = System.nanoTime();
             HashSet<Integer> cand;
             Graph CandidateGraph = new Graph();
             int[] boxID = new int[2];
@@ -73,7 +73,6 @@ public class NovelMethod {
                     for (int groupSize = 2; groupSize <= 4; groupSize++) { // Handle pairs, trios, etc.
                         if (CandidateGraph.eliminateNakedGroups(groupSize)) {
                             // Debug check to see how many groups deep it had to go
-                            System.out.println("Changes made using group size: " + groupSize);
                             changesMade = true;
                             break; // Re-evaluate the graph
                         }
@@ -98,12 +97,10 @@ public class NovelMethod {
             long elapsedTime = endTime - startTime;
             System.out.println("Solved board:");
             printBoard(board);
-            System.out.println("Execution Time: " + (elapsedTime / 1_000_000.0) + " ms");
+            totalSolvingTime += elapsedTime;
         }
 
-        long endTimeOverall = System.nanoTime();
-        long elapsedTimeOverall = endTimeOverall - startTimeOverall;
-        System.out.println("Overall Execution Time for All Boards: " + (elapsedTimeOverall / 1_000_000.0) + " ms");
+        System.out.println("Overall Execution Time for All Boards (excluding overhead): " + (totalSolvingTime / 1_000_000.0) + " ms");
 
     }
 }
