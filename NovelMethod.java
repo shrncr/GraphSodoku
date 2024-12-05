@@ -1,5 +1,13 @@
 import java.util.*;
 public class NovelMethod {
+    public static void printBoard(int[][] board) {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                System.out.print(board[i][j] + " ");
+            }
+            System.out.println();
+        }
+    }
     public static Integer[] possible = {1,2,3, 4, 5, 6,7,8,9};
     Set<Integer> BOARD_SIZE = new HashSet<>(Arrays.asList(possible));
     public static ArrayList<int[][]> boards = BoardParser.parseBoardsFromFile("boards.txt");
@@ -63,26 +71,14 @@ public class NovelMethod {
                 }
             }
             
-            ArrayList<int[][]> sol = null;
             if (!SudokuSolverBFS.isSolved(board)){
                 SudokuSolverDLS.solveDLS(board,0,0,0);
             }
 
-            long endTime = System.nanoTime(); // End the timer
-            long elapsedTime = endTime - startTime; // Calculate elapsed time
-            
-            if (sol!=null){
-                    for (int[] row : board) {
-                        System.out.println(Arrays.toString(row));     
-                    }
-                    System.out.println();
-                
-                
-            }else{
                 for (int[] row : board) {
                     System.out.println(Arrays.toString(row));     
                 }
-            }
+            
             endTimeTemp = System.nanoTime(); // End the timer
             elapsedTimeTemp = endTimeTemp - startTimeTemp; // Calculate elapsed time
             System.out.println("Execution Time: " + (elapsedTimeTemp / 1_000_000.0) + " ms");

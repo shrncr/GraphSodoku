@@ -22,6 +22,7 @@ public class SudokuSolverDLS {
         return true;
     }
 
+    // Solve Sudoku using Depth-Limited Search (DLS)
     public static boolean solveDLS(int[][] board, int row, int col, int depth) {
         if (depth > MAX_DEPTH) {
             return false; // Exceeded depth limit
@@ -53,16 +54,7 @@ public class SudokuSolverDLS {
 
         return false; // No valid solution found for this cell
     }
-    // Deep copy the board to avoid modifying the original board
-    public static int[][] deepCopy(int[][] original) {
-        int[][] copy = new int[9][9];
-        for (int i = 0; i < 9; i++) {
-            System.arraycopy(original[i], 0, copy[i], 0, 9);
-        }
-        return copy;
-    }
 
-    // Print the Sudoku board
     public static void printBoard(int[][] board) {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -71,6 +63,7 @@ public class SudokuSolverDLS {
             System.out.println();
         }
     }
+
 
     public static void main(String[] args) {
 
@@ -81,15 +74,9 @@ public class SudokuSolverDLS {
         long elapsedTimeTemp;
         for (int[][] board : boards){
             startTimeTemp = System.nanoTime();
-            boolean solved = solveDLS(board, 0, 0, 0);
-            if (solved){
-                printBoard(board);
-            }else{
-System.out.println("oops");
-            }
+            solveDLS(board, 0, 0, 0);
             
-        
-
+            printBoard(board);
 
             endTimeTemp = System.nanoTime(); // End the timer
             elapsedTimeTemp = endTimeTemp - startTimeTemp; // Calculate elapsed time
