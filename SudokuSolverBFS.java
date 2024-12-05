@@ -9,7 +9,6 @@
 import java.util.*;
 
 public class SudokuSolverBFS {
-
     public static boolean isSolved(int[][] board) {
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
@@ -90,35 +89,36 @@ public class SudokuSolverBFS {
     
 
     public static void main(String[] args) {
-        long startTime = System.nanoTime();
-        int[][] board = {
-            {2, 9, 5, 7, 4, 3, 8, 6, 1},
-            {4, 3, 1, 8, 6, 5, 9, 0, 0},
-            {8, 7, 6, 1, 9, 2, 5, 4, 3},
-            {3, 8, 7, 4, 5, 9, 2, 1, 6},
-            {6, 1, 2, 3, 8, 7, 4, 9, 5},
-            {5, 4, 9, 2, 1, 6, 7, 3, 8},
-            {7, 6, 3, 5, 2, 4, 1, 8, 9},
-            {9, 2, 8, 6, 7, 1, 3, 5, 4},
-            {1, 5, 4, 9, 3, 8, 6, 0, 0}
-        };
-
-        ArrayList<int[][]> solutions = solveBFS(board);
-        if (solutions.size() > 0) {
-            for (int[][] solvedBoard : solutions){
-                for (int[] row : solvedBoard) {
-                    System.out.println(Arrays.toString(row));
+        ArrayList<int[][]> boards = BoardParser.parseBoardsFromFile("boards.txt");
+        long startTimeOverall = System.nanoTime();
+        long startTimeTemp;
+        long endTimeTemp;
+        long elapsedTimeTemp;
+        for (int[][] board : boards){
+            startTimeTemp = System.nanoTime();
+                ArrayList<int[][]> solutions = solveBFS(board);
+                if (solutions.size() > 0) {
+                    for (int[][] solvedBoard : solutions){
+                        for (int[] row : solvedBoard) {
+                            System.out.println(Arrays.toString(row));
+                        }
+                        System.out.println();
+                    }
+                    
+                
+                } else {
+                    System.out.println("No solution found!");
+                    
                 }
-                System.out.println();
+                endTimeTemp = System.nanoTime(); // End the timer
+                elapsedTimeTemp = endTimeTemp - startTimeTemp; // Calculate elapsed time
+                System.out.println("Execution Time: " + (elapsedTimeTemp / 1_000_000.0) + " ms");
             }
-            
-        
-        } else {
-            System.out.println("No solution found!");
-            
+            long endTimeOverall = System.nanoTime();
+            long elapsedTimeOverall = endTimeOverall - startTimeOverall;
+            System.out.println("Overall Execution Time for All Boards: " + (elapsedTimeOverall / 1_000_000.0) + " ms");
+
         }
-        long endTime = System.nanoTime(); // End the timer
-        long elapsedTime = endTime - startTime; // Calculate elapsed time
-        System.out.println("Execution Time: " + (elapsedTime / 1_000_000.0) + " ms");
-    }
+
+        
 }

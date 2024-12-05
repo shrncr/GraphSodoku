@@ -22,7 +22,6 @@ public class SudokuSolverDLS {
         return true;
     }
 
-    // Solve Sudoku using Depth-Limited Search (DLS)
     public static boolean solveDLS(int[][] board, int row, int col, int depth) {
         if (depth > MAX_DEPTH) {
             return false; // Exceeded depth limit
@@ -54,7 +53,16 @@ public class SudokuSolverDLS {
 
         return false; // No valid solution found for this cell
     }
+    // Deep copy the board to avoid modifying the original board
+    public static int[][] deepCopy(int[][] original) {
+        int[][] copy = new int[9][9];
+        for (int i = 0; i < 9; i++) {
+            System.arraycopy(original[i], 0, copy[i], 0, 9);
+        }
+        return copy;
+    }
 
+    // Print the Sudoku board
     public static void printBoard(int[][] board) {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -65,33 +73,30 @@ public class SudokuSolverDLS {
     }
 
     public static void main(String[] args) {
-        int[][] board = {
-            {0, 0, 0, 6, 0, 0, 4, 0, 0},
-            {7, 0, 0, 0, 0, 3, 6, 0, 0},
-            {0, 0, 0, 0, 9, 1, 0, 8, 0},
-            {0, 0, 0, 0, 0, 0, 0, 0, 0},
-            {0, 5, 0, 1, 8, 0, 0, 0, 3},
-            {0, 0, 0, 3, 0, 6, 0, 4, 5},
-            {0, 4, 0, 2, 0, 0, 0, 6, 0},
-            {9, 0, 3, 0, 0, 0, 0, 0, 0},
-            {0, 2, 0, 0, 0, 0, 1, 0, 0}
-        };
 
-        // Start the timer
-        long startTime = System.nanoTime();
+        ArrayList<int[][]> boards = BoardParser.parseBoardsFromFile("boards.txt");
+        long startTimeOverall = System.nanoTime();
+        long startTimeTemp;
+        long endTimeTemp;
+        long elapsedTimeTemp;
+        for (int[][] board : boards){
+            startTimeTemp = System.nanoTime();
+            boolean solved = solveDLS(board, 0, 0, 0);
+            if (solved){
+                printBoard(board);
+            }else{
+System.out.println("oops");
+            }
+            
+        
 
-        // Solve the Sudoku puzzle
-        if (solveDLS(board, 0, 0, 0)) {
-            long endTime = System.nanoTime(); // End the timer
-            long elapsedTime = endTime - startTime; // Calculate elapsed time
-            System.out.println("Solved Sudoku:");
-            printBoard(board); // Print solved board
-            System.out.println("Execution Time: " + (elapsedTime / 1_000_000.0) + " ms");
-        } else {
-            long endTime = System.nanoTime(); // End the timer
-            long elapsedTime = endTime - startTime; // Calculate elapsed time
-            System.out.println("No solution found!");
-            System.out.println("Execution Time: " + (elapsedTime / 1_000_000.0) + " ms");
+
+            endTimeTemp = System.nanoTime(); // End the timer
+            elapsedTimeTemp = endTimeTemp - startTimeTemp; // Calculate elapsed time
+            System.out.println("Execution Time: " + (elapsedTimeTemp / 1_000_000.0) + " ms");
         }
+    long endTimeOverall = System.nanoTime();
+    long elapsedTimeOverall = endTimeOverall - startTimeOverall;
+    System.out.println("Overall Execution Time for All Boards: " + (elapsedTimeOverall / 1_000_000.0) + " ms");
     }
 }
