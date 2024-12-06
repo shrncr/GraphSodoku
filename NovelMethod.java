@@ -11,7 +11,8 @@ public class NovelMethod {
             System.out.println();
         }
     }
-    public static Integer[] possible = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+    public static Integer[] possible = { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
     Set<Integer> BOARD_SIZE = new HashSet<>(Arrays.asList(possible));
     public static ArrayList<int[][]> boards = BoardParser.parseBoardsFromFile("boards.txt");
 
@@ -98,9 +99,11 @@ public class NovelMethod {
             System.out.println("Solved board:");
             printBoard(board);
             totalSolvingTime += elapsedTime;
+            System.out.println("Elapsed Time for board solve " + (elapsedTime / 1_000_000.0) + " ms");
         }
 
-        System.out.println("Overall Execution Time for All Boards (excluding overhead): " + (totalSolvingTime / 1_000_000.0) + " ms");
+        System.out.println("Overall Execution Time for All Boards (excluding overhead): "
+                + (totalSolvingTime / 1_000_000.0) + " ms");
 
     }
 }

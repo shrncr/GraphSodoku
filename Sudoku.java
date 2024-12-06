@@ -34,7 +34,7 @@ public class Sudoku {
             throw new IllegalArgumentException("Number must be between 1 and 9.");
         }
         board[row][col].setNumber(n);
-        // eliminateCandidates(n, row, col);
+        eliminateCandidates(n, row, col);
     }
 
     public static Cell[][] addNumber(int n, int row, int col, Cell[][] board) {
@@ -256,6 +256,7 @@ public class Sudoku {
         long solveEnd;
         long displayEnd;
         long endTime;
+        long nooverhead = 0;
         int count = 0;
         startTime = System.nanoTime();
         for (int[][] board : boards) {
@@ -270,12 +271,13 @@ public class Sudoku {
                 }
             }
             numEnd = System.nanoTime();
-            System.out.println("Time taken to add all numbers: " + (numEnd - numStart) / 1_000_000.0 + " ms");
             sudoku.solveDFS();
             solveEnd = System.nanoTime();
-            System.out.println("Time taken to solve: " + (solveEnd - numEnd) / 1_000_000.0 + " ms");
             sudoku.displayBoard();
             displayEnd = System.nanoTime();
+            System.out.println("Time taken to add all numbers: " + (numEnd - numStart) / 1_000_000.0 + " ms");
+            System.out.println("Time taken to solve: " + (solveEnd - numEnd) / 1_000_000.0 + " ms");
+            nooverhead += (solveEnd - numEnd);
             System.out.println("Time taken to display: " + (displayEnd - solveEnd) / 1_000_000.0 + " ms");
             System.out.println("Time for board: " + (displayEnd - numStart) / 1_000_000.0 + " ms");
 
@@ -285,6 +287,7 @@ public class Sudoku {
         endTime = System.nanoTime(); // End time measurement
 
         System.out.println("Time taken to solve all: " + (endTime - startTime) / 1_000_000.0 + " ms");
+        System.out.println("Time to solve no overhead:" + (nooverhead) / 1_000_000.0 + " ms");
 
     }
 }

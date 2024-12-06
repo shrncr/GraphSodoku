@@ -1,3 +1,4 @@
+
 /*
  * DLS Implementation of Sodoku Solver
  * Implementation based on https://github.com/elondemi/Sudoku-Solver
@@ -16,14 +17,16 @@ public class SudokuSolverDLS {
     public static boolean isValid(int[][] board, int row, int col, int num) {
         // Check row and column
         for (int i = 0; i < 9; i++) {
-            if (board[row][i] == num || board[i][col] == num) return false;
+            if (board[row][i] == num || board[i][col] == num)
+                return false;
         }
         // Check the 3x3 subgrid
         int startRow = (row / 3) * 3;
         int startCol = (col / 3) * 3;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-                if (board[startRow + i][startCol + j] == num) return false;
+                if (board[startRow + i][startCol + j] == num)
+                    return false;
             }
         }
         return true;
@@ -36,7 +39,8 @@ public class SudokuSolverDLS {
         }
 
         // If the entire board is filled, return true
-        if (row == 9) return true;
+        if (row == 9)
+            return true;
 
         // Move to the next row if we are at the end of the column
         if (col == 9) {
@@ -64,10 +68,9 @@ public class SudokuSolverDLS {
 
     public static void printBoard(int[][] board) {
         for (int[] row : board) {
-            System.out.println(Arrays.toString(row));     
+            System.out.println(Arrays.toString(row));
         }
     }
-
 
     public static void main(String[] args) {
 
@@ -76,18 +79,18 @@ public class SudokuSolverDLS {
         long startTimeTemp;
         long endTimeTemp;
         long elapsedTimeTemp;
-        for (int[][] board : boards){
+        for (int[][] board : boards) {
             startTimeTemp = System.nanoTime();
             solveDLS(board, 0, 0, 0);
-            
+            endTimeTemp = System.nanoTime();
             printBoard(board);
 
-            endTimeTemp = System.nanoTime(); // End the timer
+            // End the timer
             elapsedTimeTemp = endTimeTemp - startTimeTemp; // Calculate elapsed time
-            System.out.println("Execution Time: " + (elapsedTimeTemp / 1_000_000.0) + " ms");
+            System.out.println("Solve Time: " + (elapsedTimeTemp / 1_000_000.0) + " ms");
         }
-    long endTimeOverall = System.nanoTime();
-    long elapsedTimeOverall = endTimeOverall - startTimeOverall;
-    System.out.println("Overall Execution Time for All Boards: " + (elapsedTimeOverall / 1_000_000.0) + " ms");
+        long endTimeOverall = System.nanoTime();
+        long elapsedTimeOverall = endTimeOverall - startTimeOverall;
+        System.out.println("Overall Execution Time for All Boards: " + (elapsedTimeOverall / 1_000_000.0) + " ms");
     }
 }
