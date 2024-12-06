@@ -104,7 +104,7 @@ public class Sudoku {
     private Cell[][] solveDFS(Cell[][] board) {
         // If the board is solved, return it
         if (isSolved(board)) {
-            return copyBoard(board);
+            return board;
         }
 
         // Find the next empty cell (with the fewest candidates)
@@ -286,7 +286,7 @@ public class Sudoku {
         }
         endTime = System.nanoTime(); // End time measurement
 
-        System.out.println("Time taken to solve all: " + (endTime - startTime) / 1_000_000.0 + " ms");
+        System.out.println("Time taken to execute all: " + (endTime - startTime) / 1_000_000.0 + " ms");
         System.out.println("Time to solve no overhead:" + (nooverhead) / 1_000_000.0 + " ms");
 
     }

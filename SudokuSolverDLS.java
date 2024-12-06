@@ -76,6 +76,7 @@ public class SudokuSolverDLS {
 
         ArrayList<int[][]> boards = BoardParser.parseBoardsFromFile("boards.txt");
         long startTimeOverall = System.nanoTime();
+        long noOTime = 0;
         long startTimeTemp;
         long endTimeTemp;
         long elapsedTimeTemp;
@@ -87,10 +88,14 @@ public class SudokuSolverDLS {
 
             // End the timer
             elapsedTimeTemp = endTimeTemp - startTimeTemp; // Calculate elapsed time
+            noOTime += elapsedTimeTemp;
             System.out.println("Solve Time: " + (elapsedTimeTemp / 1_000_000.0) + " ms");
         }
         long endTimeOverall = System.nanoTime();
         long elapsedTimeOverall = endTimeOverall - startTimeOverall;
+
         System.out.println("Overall Execution Time for All Boards: " + (elapsedTimeOverall / 1_000_000.0) + " ms");
+        System.out.println(
+                "Overall Execution Time for All Boards No Overhead: " + (noOTime / 1_000_000.0) + " ms");
     }
 }
