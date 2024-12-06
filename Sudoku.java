@@ -34,7 +34,7 @@ public class Sudoku {
             throw new IllegalArgumentException("Number must be between 1 and 9.");
         }
         board[row][col].setNumber(n);
-        eliminateCandidates(n, row, col);
+        // eliminateCandidates(n, row, col);
     }
 
     public static Cell[][] addNumber(int n, int row, int col, Cell[][] board) {
@@ -95,12 +95,8 @@ public class Sudoku {
     }
 
     public Cell[][] solveDFS() {
-        long startTime = System.nanoTime(); // Start timing
-        this.board = solveDFS(this.board);
-        long endTime = System.nanoTime(); // End timing
 
-        double durationInMilliseconds = (endTime - startTime) / 1_000_000.0; // Convert to milliseconds
-        System.out.printf("DFS solving time: %.3f milliseconds%n", durationInMilliseconds);
+        this.board = solveDFS(this.board);
 
         return this.board;
     }
@@ -224,6 +220,14 @@ public class Sudoku {
         return copy;
     }
 
+    public void clearBoard() {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                board[i][j].reset();
+            }
+        }
+    }
+
     private String serializeBoard(Cell[][] board) {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < 9; i++) {
@@ -246,25 +250,41 @@ public class Sudoku {
     public static void main(String[] args) {
 
         ArrayList<int[][]> boards = BoardParser.parseBoardsFromFile("boards.txt");
-        long startTime = System.nanoTime();
+        long startTime;
+        long numStart;
+        long numEnd;
+        long solveEnd;
+        long displayEnd;
+        long endTime;
         int count = 0;
+        startTime = System.nanoTime();
         for (int[][] board : boards) {
-            System.out.println("Board " + count);
+            numStart = System.nanoTime();
             Sudoku sudoku = new Sudoku();
+            System.out.println();
+            System.out.println("Board " + count);
             for (int i = 0; i < 9; i++) {
                 for (int j = 0; j < 9; j++) {
                     if (board[i][j] != 0)
                         sudoku.addNumber(board[i][j], i, j);
                 }
             }
+            numEnd = System.nanoTime();
+            System.out.println("Time taken to add all numbers: " + (numEnd - numStart) / 1_000_000.0 + " ms");
             sudoku.solveDFS();
+            solveEnd = System.nanoTime();
+            System.out.println("Time taken to solve: " + (solveEnd - numEnd) / 1_000_000.0 + " ms");
             sudoku.displayBoard();
+            displayEnd = System.nanoTime();
+            System.out.println("Time taken to display: " + (displayEnd - solveEnd) / 1_000_000.0 + " ms");
+            System.out.println("Time for board: " + (displayEnd - numStart) / 1_000_000.0 + " ms");
+
             count++;
 
         }
-        long endTime = System.nanoTime(); // End time measurement
-        long elapsedTime = endTime - startTime; // Calculate elapsed time in nanoseconds
-        System.out.println("Time taken to solve all: " + elapsedTime / 1_000_000.0 + " ms");
+        endTime = System.nanoTime(); // End time measurement
+
+        System.out.println("Time taken to solve all: " + (endTime - startTime) / 1_000_000.0 + " ms");
 
     }
 }

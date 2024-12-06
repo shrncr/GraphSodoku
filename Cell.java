@@ -22,6 +22,11 @@ public class Cell {
         this.candidates = c.getCandidates();
     }
 
+    public void reset() {
+        this.number = null; // No number assigned initially
+        this.candidates = new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+    }
+
     // Getters and setters
     public Integer getNumber() {
         return number;
@@ -29,7 +34,7 @@ public class Cell {
 
     public void setNumber(int number) {
         this.number = number;
-        this.candidates = new int[0]; // Clear candidates
+        // this.candidates = new int[0]; // Clear candidates
     }
 
     public int[] getCandidates() {
