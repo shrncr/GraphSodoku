@@ -42,11 +42,14 @@ public class NovelMethod {
 
     public static void main(String[] args) {
         long totalSolvingTime = 0;
+        long endTime;
+        long elapsedTime;
+        long startTime;
         for (int[][] board : boards) {
 
             System.out.println("Solving new board:");
             printBoard(board);
-            long startTime = System.nanoTime();
+
             HashSet<Integer> cand;
             Graph CandidateGraph = new Graph();
             int[] boxID = new int[2];
@@ -64,7 +67,7 @@ public class NovelMethod {
                     }
                 }
             }
-
+            startTime = System.nanoTime();
             // Solve the Sudoku
             boolean changesMade;
             while (!CandidateGraph.isEmpty()) {
@@ -94,8 +97,8 @@ public class NovelMethod {
             }
 
             // Print the solved board and timing
-            long endTime = System.nanoTime();
-            long elapsedTime = endTime - startTime;
+            endTime = System.nanoTime();
+            elapsedTime = endTime - startTime;
             System.out.println("Solved board:");
             printBoard(board);
             totalSolvingTime += elapsedTime;
