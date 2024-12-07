@@ -1,3 +1,4 @@
+
 /*
  * BFS Implementation of Sodoku Solver
  * Implementation based on https://github.com/erickfunier/sudoku-solver
@@ -12,35 +13,38 @@ import java.util.*;
 public class SudokuSolverBFS {
     public static void printBoard(int[][] board) {
         for (int[] row : board) {
-            System.out.println(Arrays.toString(row));     
+            System.out.println(Arrays.toString(row));
         }
     }
+
     public static boolean isSolved(int[][] board) {
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
                 if (board[row][col] == 0) {
-                    return false; //unsolved
+                    return false; // unsolved
                 }
                 if (!isValid(board, row, col, board[row][col])) {
-                    return false; //not valid
+                    return false; // not valid
                 }
             }
         }
         return true;
     }
 
-
     public static boolean isValid(int[][] board, int row, int col, int num) {
         for (int i = 0; i < 9; i++) {
-            if (board[row][i] == num && i != col) return false;
-            if (board[i][col] == num && i != row) return false;
+            if (board[row][i] == num && i != col)
+                return false;
+            if (board[i][col] == num && i != row)
+                return false;
         }
         int startRow = (row / 3) * 3;
         int startCol = (col / 3) * 3;
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
                 int r = startRow + i, c = startCol + j;
-                if (board[r][c] == num && !(r == row && c == col)) return false;
+                if (board[r][c] == num && !(r == row && c == col))
+                    return false;
             }
         }
         return true;
@@ -56,8 +60,7 @@ public class SudokuSolverBFS {
 
     public static List<int[][]> generateNextStates(int[][] board) {
         List<int[][]> nextStates = new ArrayList<>();
-        outerLoop:
-        for (int row = 0; row < 9; row++) {
+        outerLoop: for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
                 if (board[row][col] == 0) { // Empty cell found
                     for (int num = 1; num <= 9; num++) {
@@ -67,32 +70,32 @@ public class SudokuSolverBFS {
                             nextStates.add(newState);
                         }
                     }
-                    break outerLoop; 
+                    break outerLoop;
                 }
             }
         }
         return nextStates;
     }
-    
+
     public static ArrayList<int[][]> solveBFS(int[][] board) {
         Queue<int[][]> queue = new LinkedList<>();
         queue.add(board);
         ArrayList<int[][]> solutions = new ArrayList<>();
-    
+
         while (!queue.isEmpty()) {
             int[][] currentState = queue.poll();
             if (isSolved(currentState)) {
-                boolean isDuplicate = solutions.stream().anyMatch(solution -> Arrays.deepEquals(solution, currentState));
+                boolean isDuplicate = solutions.stream()
+                        .anyMatch(solution -> Arrays.deepEquals(solution, currentState));
                 if (!isDuplicate) {
                     solutions.add(currentState);
                 }
-                continue; 
+                continue;
             }
             queue.addAll(generateNextStates(currentState));
         }
-        return solutions; 
+        return solutions;
     }
-    
 
     public static void main(String[] args) {
         ArrayList<int[][]> boards = BoardParser.parseBoardsFromFile("boards.txt");
@@ -100,26 +103,30 @@ public class SudokuSolverBFS {
         long startTimeTemp;
         long endTimeTemp;
         long elapsedTimeTemp;
-        for (int[][] board : boards){
+        long overhead = 0;
+        for (int[][] board : boards) {
             startTimeTemp = System.nanoTime();
-                ArrayList<int[][]> solutions = solveBFS(board);
-                if (solutions.size() > 0) {
-                    for (int[][] solvedBoard : solutions){
-                        printBoard(solvedBoard);
-                    }
-                } else {
-                    System.out.println("No solution found!");
-                    
+            ArrayList<int[][]> solutions = solveBFS(board);
+            endTimeTemp = System.nanoTime();
+            if (solutions.size() > 0) {
+                for (int[][] solvedBoard : solutions) {
+                    printBoard(solvedBoard);
                 }
-                endTimeTemp = System.nanoTime(); // End the timer
-                elapsedTimeTemp = endTimeTemp - startTimeTemp; // Calculate elapsed time
-                System.out.println("Execution Time: " + (elapsedTimeTemp / 1_000_000.0) + " ms");
+            } else {
+                System.out.println("No solution found!");
+
             }
-            long endTimeOverall = System.nanoTime();
-            long elapsedTimeOverall = endTimeOverall - startTimeOverall;
-            System.out.println("Overall Execution Time for All Boards: " + (elapsedTimeOverall / 1_000_000.0) + " ms");
-
+            // End the timer
+            elapsedTimeTemp = endTimeTemp - startTimeTemp;
+            overhead += elapsedTimeTemp; // Calculate elapsed time
+            System.out.println("Execution Time To Solve: " + (elapsedTimeTemp / 1_000_000.0) + " ms");
         }
+        long endTimeOverall = System.nanoTime();
+        long elapsedTimeOverall = endTimeOverall - startTimeOverall;
+        System.out.println("Overall Execution Time for All Boards: " + (elapsedTimeOverall / 1_000_000.0) + " ms");
+        System.out.println("Overall Execution Time to Solve all Boards No Overhead: "
+                + (elapsedTimeOverall / 1_000_000.0) + " ms");
 
-        
+    }
+
 }

@@ -1,15 +1,17 @@
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
 
+/*
+ * DFS on a preproccessed board of cells Implementation of Sodoku Solver
+ * 
+ * It creates an empty cells 
+ */
 public class Sudoku {
     Cell[][] board; // The 9x9 Sudoku board
 
     // Constructor to initialize the Sudoku board
     public Sudoku() {
         board = new Cell[9][9]; // Create a 9x9 array
+
         // Fill the board with empty Cell objects
         for (int row = 0; row < 9; row++) {
             for (int col = 0; col < 9; col++) {
@@ -26,6 +28,10 @@ public class Sudoku {
     /**
      * Adds a number to the specified cell in the Sudoku board.
      */
+    public void addNoEliminate(int n, int row, int col) {
+        this.board[row][col].setNumber(n);
+    }
+
     public void addNumber(int n, int row, int col) {
         if (row < 0 || row >= 9 || col < 0 || col >= 9) {
             throw new IllegalArgumentException("Row and column must be between 0 and 8.");
@@ -37,7 +43,7 @@ public class Sudoku {
         eliminateCandidates(n, row, col);
     }
 
-    public static Cell[][] addNumber(int n, int row, int col, Cell[][] board) {
+    private static Cell[][] addNumber(int n, int row, int col, Cell[][] board) {
         if (row < 0 || row >= 9 || col < 0 || col >= 9) {
             throw new IllegalArgumentException("Row and column must be between 0 and 8.");
         }
@@ -134,7 +140,7 @@ public class Sudoku {
     }
 
     private int[] findNextEmptyCell(Cell[][] board) {
-        int minCandidates = Integer.MAX_VALUE;
+        int minCandidates = 10;
         int[] bestCell = null;
 
         for (int i = 0; i < 9; i++) {
@@ -157,59 +163,6 @@ public class Sudoku {
         return bestCell;
     }
 
-    public ArrayList<Cell[][]> solveBFS() {
-        return solveBFS(this.board);
-    }
-
-    private ArrayList<Cell[][]> solveBFS(Cell[][] board) {
-        long startTime = System.nanoTime(); // Start time measurement
-
-        Queue<Cell[][]> queue = new LinkedList<>();
-        queue.add(copyBoard(board));
-        ArrayList<Cell[][]> solutions = new ArrayList<>();
-        HashSet<String> visited = new HashSet<>();
-
-        while (!queue.isEmpty()) {
-            Cell[][] currentState = queue.poll();
-
-            String serialized = serializeBoard(currentState);
-            if (visited.contains(serialized))
-                continue;
-            visited.add(serialized);
-
-            if (isSolved(currentState)) {
-                solutions.add(copyBoard(currentState));
-                continue;
-            }
-
-            queue.addAll(generateNextStates(currentState));
-        }
-
-        long endTime = System.nanoTime(); // End time measurement
-        long elapsedTime = endTime - startTime; // Calculate elapsed time in nanoseconds
-        System.out.println("Time taken to solve: " + elapsedTime / 1_000_000.0 + " ms");
-
-        return solutions;
-    }
-
-    public static List<Cell[][]> generateNextStates(Cell[][] board) {
-        List<Cell[][]> nextStates = new ArrayList<>();
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                if (board[i][j].getNumber() == null) {
-                    int[] candidates = board[i][j].getCandidates();
-                    for (int candidate : candidates) {
-                        Cell[][] copy = copyBoard(board);
-                        addNumber(candidate, i, j, copy);
-                        nextStates.add(copy);
-                    }
-                    return nextStates;
-                }
-            }
-        }
-        return nextStates;
-    }
-
     private static Cell[][] copyBoard(Cell[][] board) {
         Cell[][] copy = new Cell[9][9];
         for (int i = 0; i < 9; i++) {
@@ -228,16 +181,6 @@ public class Sudoku {
         }
     }
 
-    private String serializeBoard(Cell[][] board) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                sb.append(board[i][j].getNumber() == null ? "0" : board[i][j].getNumber());
-            }
-        }
-        return sb.toString();
-    }
-
     public void displayBoard() {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -251,16 +194,16 @@ public class Sudoku {
 
         ArrayList<int[][]> boards = BoardParser.parseBoardsFromFile("boards.txt");
         long startTime;
-        long numStart;
+
         long numEnd;
         long solveEnd;
-        long displayEnd;
+
         long endTime;
         long nooverhead = 0;
         int count = 0;
         startTime = System.nanoTime();
         for (int[][] board : boards) {
-            numStart = System.nanoTime();
+
             Sudoku sudoku = new Sudoku();
             System.out.println();
             System.out.println("Board " + count);
@@ -270,16 +213,14 @@ public class Sudoku {
                         sudoku.addNumber(board[i][j], i, j);
                 }
             }
+
             numEnd = System.nanoTime();
             sudoku.solveDFS();
             solveEnd = System.nanoTime();
             sudoku.displayBoard();
-            displayEnd = System.nanoTime();
-            System.out.println("Time taken to add all numbers: " + (numEnd - numStart) / 1_000_000.0 + " ms");
+
             System.out.println("Time taken to solve: " + (solveEnd - numEnd) / 1_000_000.0 + " ms");
             nooverhead += (solveEnd - numEnd);
-            System.out.println("Time taken to display: " + (displayEnd - solveEnd) / 1_000_000.0 + " ms");
-            System.out.println("Time for board: " + (displayEnd - numStart) / 1_000_000.0 + " ms");
 
             count++;
 
