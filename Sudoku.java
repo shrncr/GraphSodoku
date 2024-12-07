@@ -3,7 +3,8 @@ import java.util.ArrayList;
 /*
  * DFS on a preproccessed board of cells Implementation of Sodoku Solver
  * 
- * It creates an empty cells 
+ * It creates a sudoku of empty cells then every time a number is added it eliminates cells around it
+ * after all numbers have been added it solves using DFS and updates canidates as it goes
  */
 public class Sudoku {
     Cell[][] board; // The 9x9 Sudoku board
