@@ -1,3 +1,8 @@
+/*
+ * Vertex class
+ * Specific to Sudoku use case
+ *ChatGPT provided immense assistance with functions: removeEdge, removeEdges, countEdgetypes, hasEdgeWith, toString.
+ */
 import java.util.*;
 public class Vertex {
     private HashSet<Integer> candidateData;

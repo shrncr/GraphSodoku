@@ -1,3 +1,8 @@
+/*
+ * Graph Class
+ * Specific to Sudoku use case!
+ */
+
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -16,7 +21,7 @@ public class Graph {
     public boolean isEmpty(){
         return this.start == null;
     }
-    public void add(int row, int col, int[] boxID, Vertex vertex) {
+    public void add(int row, int col, int[] boxID, Vertex vertex) { //adds new vertex to graph and adds edges connecting to rows, cols, and vertices that impact its candidate list
         HashSet<Vertex> visited = new HashSet<>();
         ArrayList<Vertex> queue = new ArrayList<>();
     
@@ -35,7 +40,6 @@ public class Graph {
                 if (!vertex.hasEdgeWith(temp, 2)) { 
                     vertex.addEdge(temp, 2);
                     temp.addEdge(vertex, 2);
-                    //System.out.println("adding [" + temp.getRow() + ", " + temp.getCol() + "]");
                 }
             }
     
@@ -62,7 +66,7 @@ public class Graph {
             }
         }
     }
-    private int[] helper(Vertex vertex, HashSet<Vertex> verticesToRemove) {
+    private int[] helper(Vertex vertex, HashSet<Vertex> verticesToRemove) {//helper functino for single candidate removal
         int[] toret = {-1,-1,-1};
         if (vertex.getCandidates().size() == 1) {
             int fixedValue = vertex.getCandidates().iterator().next(); 
@@ -76,7 +80,7 @@ public class Graph {
         }
         return toret;
     }
-    public boolean eliminateNakedGroups(int groupSize) {
+    public boolean eliminateNakedGroups(int groupSize) { //finds neighboring vertices with identical candidate sets, eliminates options from shared neighbors
         boolean changesMade = false;
         ArrayList<Vertex> queue = new ArrayList<>();
         HashSet<Vertex> visited = new HashSet<>();
@@ -123,7 +127,7 @@ public class Graph {
         return changesMade;
     }
     
-    private void findGroups(Vertex vertex, HashSet<Vertex> verticesToProcess, int groupSize) {
+    private void findGroups(Vertex vertex, HashSet<Vertex> verticesToProcess, int groupSize) { //helper for naked groups
         for (Vertex neighbor : vertex.getNeighbors()) {
             if (vertex.getCandidates().equals(neighbor.getCandidates())
                     && vertex.getCandidates().size() == groupSize) {
@@ -132,22 +136,12 @@ public class Graph {
             }
         }
     }
-    private boolean help(Vertex vertex, HashSet<Vertex> verticesToProcess) { //for multiplenaked
-        for (Vertex neighbor : vertex.getNeighbors()) {
-            if (vertex.getCandidates().equals(neighbor.getCandidates()) && vertex != neighbor) {
-                verticesToProcess.add(vertex);
-                verticesToProcess.add(neighbor);
-                return true; //if found
-            }
-        }
-        return false;
-    }
-    private boolean isInCommonRegion(Vertex vertex1, Vertex vertex2, Vertex candidate) {
+    private boolean isInCommonRegion(Vertex vertex1, Vertex vertex2, Vertex candidate) { //helper for naked groups
         return ( vertex1.getBoxID().equals(vertex2.getBoxID()) && vertex1.getBoxID().equals(candidate.getBoxID()) ||
         vertex1.getRow() == vertex2.getRow() && vertex1.getRow() == (candidate.getRow()) ||
         vertex1.getCol() == (vertex2.getCol()) && vertex1.getCol() == candidate.getCol() );
     }    
-    public ArrayList<int[]> eliminateSingleCandidates() {
+    public ArrayList<int[]> eliminateSingleCandidates() { //removes vertex with one single candidate (as it is a solution); removes option from vertex's direct neighbors
         ArrayList<Vertex> queue = new ArrayList<>();
         HashSet<Vertex> visited = new HashSet<>();
         HashSet<Vertex> verticesToRemove = new HashSet<>();
@@ -189,7 +183,7 @@ public class Graph {
         return items;
     }
     @Override
-    public String toString() {//chat help
+    public String toString() {//chat helped with this
         if (this.start == null) {
             return "Graph is empty";
         }

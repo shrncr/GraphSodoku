@@ -1,4 +1,10 @@
-
+/*MAIN FILE
+ * New method which mimics typical in-person sudoku game play
+ * Populates a graph with vertices of candidates
+ * Continuously narrows down solution based on "Single Candidates," "Naked Pairs," and "Naked Groups"
+ * Above functionalities found in Graph.java
+ * Once candidates are narrowed down, we solve with DLS
+ */
 import java.util.*;
 
 public class NovelMethod {
@@ -46,7 +52,6 @@ public class NovelMethod {
 
             System.out.println("Solving new board:");
             printBoard(board);
-
             HashSet<Integer> cand;
             Graph CandidateGraph = new Graph();
             int[] boxID = new int[2];

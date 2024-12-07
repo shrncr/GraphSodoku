@@ -1,3 +1,7 @@
+/*
+ * Reads in boards from file (intended to be boards.txt)
+ * if using other file, maintain same structure as boards.txt!
+ */
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -50,17 +54,4 @@ public class BoardParser {
         return boards;
     }
 
-    public static void main(String[] args) {
-        ArrayList<int[][]> boards = parseBoardsFromFile("boards.txt");
-        // Print boards to verify the parsing
-        for (int[][] board : boards) {
-            for (int[] row : board) {
-                for (int num : row) {
-                    System.out.print(num + " ");
-                }
-                System.out.println();
-            }
-            System.out.println();
-        }
-    }
 }
